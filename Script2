@@ -1,0 +1,77 @@
+setwd("C:/Users/USER/Downloads/Rintermediate1-main/Rintermediate1-main")
+diet <- read.csv("diet.csv")
+head(diet)
+
+library(dplyr)
+## 1. filter
+### 논리식 
+
+diet %>% # Ctrl+shift+m 
+  filter(Diet == 3) # 같다.
+diet %>% 
+  filter(Diet != 1) # 같지 않다.
+diet %>% 
+  filter(gender==0, Diet == 3) # 교집합
+diet %>% 
+  filter(gender==0 | Diet == 3) # 합집합
+diet %>% 
+  filter(20 <= Age, Age < 30) # 복합조건
+
+# 예를 들어서 diet가 1 또는 3인 경우 
+diet %>% 
+  filter(Diet ==1 | Diet ==3)
+diet %>% 
+  filter(Diet %in% c(1,3))
+
+## 2. arrange
+diet %>% 
+  arrange(gender, Diet, -pre.weight) %>% 
+  head(2)
+diet %>% 
+  group_by(gender, Diet) %>% 
+  slice_min(pre.weight, n=2)
+
+# 오름차순
+diet %>% 
+  arrange(-pre.weight) # 내림차순
+
+## 3. select
+diet %>% 
+  arrange(gender, Diet, -pre.weight) %>% 
+  head(2) %>% 
+  select(Diet, pre.weight, gender)
+
+## 4. mutate
+head(diet)
+diet %>% 
+  mutate(diff = pre.weight - weight6weeks) %>% 
+  arrange(-diff) %>% 
+  head(5)
+
+diet %>% 
+  mutate(diff = pre.weight - weight6weeks) %>% 
+  group_by(Diet) %>% 
+  slice_max(diff, n=2) %>% data.frame
+
+
+## 5. group_by
+## 6. summarise()
+
+diet %>% 
+  group_by(Diet) %>% 
+  summarise(표본수=n(),
+    평균사전몸무게= mean(pre.weight),
+    평균사후몸무게 = mean(weight6weeks))
+
+diet %>% 
+  group_by(gender) %>% 
+  summarise(표본수=n(),
+            평균사전몸무게= mean(pre.weight),
+            평균사후몸무게 = mean(weight6weeks))
+
+diet %>% 
+  filter(!is.na(gender)) %>% 
+  group_by(gender, Diet) %>% 
+  summarise(표본수=n(),
+            평균사전몸무게= mean(pre.weight),
+            평균사후몸무게 = mean(weight6weeks))
