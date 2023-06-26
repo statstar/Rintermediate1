@@ -1,0 +1,22 @@
+head(f1970,2)
+head(f2000,2)
+
+# 1번
+f1970 %>% select(-1) %>% 
+  inner_join(f2000 %>% select(-1), by="Company") %>% nrow
+
+# 2번
+f1970 %>% select(-1) %>% 
+  inner_join(f2000 %>% select(-1), by="Company") %>% 
+  mutate(growth=round(Revenues.y/Revenues.x*100,2)) %>% 
+  arrange(-growth) %>% 
+  head(5)
+
+# 3번
+f2000 %>% 
+  anti_join(f1970, by="Company") %>% 
+  select(1,2)
+
+bind_cols()
+bind_rows()  
+
